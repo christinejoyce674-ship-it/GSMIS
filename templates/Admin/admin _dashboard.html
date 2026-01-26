@@ -1,0 +1,46 @@
+from django.contrib import admin
+from .models import learner, AcademicRecord ,TermSummary  
+from django.db.models import Avg, Count
+# results/admin.py
+from django.contrib import admin
+from .models import Learner, AcademicRecord, TermSummary
+
+# Customizing the Dashboard Header
+admin.site.site_header = "Good Hope Nabulagala Management System"
+admin.site.index_title = "School Administration Dashboard"
+
+@admin.register(Learner)
+class LearnerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'learner_id', 'class_name')
+    search_fields = ('name', 'learner_id')
+    list_filter = ('class_name',)
+
+@admin.register(AcademicRecord)
+class AcademicRecordAdmin(admin.ModelAdmin):
+    list_display = ('learner', 'subject', 'term', 'mid', 'eot', 'final_weighted_mark')
+    list_filter = ('term', 'subject')
+
+    @admin.register(TermSummary)
+class TermSummaryAdmin(admin.ModelAdmin):
+    list_display = ('learner', 'term', 'teacher_comment')
+
+
+
+from django.db.models import Avg, Count
+
+def director_dashboard(request):
+    # Calculate key statistics for the school
+    total_learner = Learner.objects.count()
+    class_averages = AcademicRecord.objects.values('learner__class_name').annotate(avg_score=Avg('mid')) # Simplistic average
+
+        # Calculate Pass/Fail counts for the whole school
+    pass_count = AcademicRecord.objects.filter(eot__gte=50).count()
+    fail_count = AcademicRecord.objects.filter(eot__lt=50).count()
+
+    context = {
+        'total_learners': total_learners,
+        'class_averages': class_averages,
+        'pass_count': pass_count,
+        'fail_count': fail_count,
+    }
+    return render(request, 'dashboard.html', context)

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <h3>Welcome, {{ user.first_name }}</h3>
+    <p class="text-muted">Parent Portal - Good Hope Nabulagala</p>
+</div>
+
+<div class="row">
+    {% for child in children %}
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center">
+                {% if child.admin.profile_pic %}
+                    <img src="{{ child.admin.profile_pic.url }}" class="rounded-circle mb-3" width="100" height="100" style="object-fit: cover;">
+                {% else %}
+                    <div class="bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width:100px; height:100px;">
+                        <i class="fas fa-user fa-3x text-secondary"></i>
+                    </div>
+                {% endif %}
+                <h4>{{ child.admin.first_name }} {{ child.admin.last_name }}</h4>
+                <p class="badge bg-info text-dark">{{ child.classe_id.class_name }}</p>
+                <hr>
+                <a href="{% url 'report_card' child.id %}" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-file-invoice"></i> View Report Card
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center">
+        <div class="alert alert-warning">No children linked to this account. Please contact the Office.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

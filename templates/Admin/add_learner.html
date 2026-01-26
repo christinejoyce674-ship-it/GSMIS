@@ -1,0 +1,209 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
+    crossorigin="anonymous"></script>
+
+{% extends 'base.html' %}
+{% block content %}
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <form method="post" action="{% url 'add_learner' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Add Learners</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="learners.html">Learners</a></li>
+                            <li class="breadcrumb-item active">Add Learners</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5 class="form-title"><span>Learner Information</span></h5>
+                                    </div>
+                                    {% include "includes/messages.html" %}
+
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>First Name</label>
+                                            <input type="text" name="first_name" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>Last Name</label>
+                                            <input type="text" name="last_name" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>Learner Id</label>
+                                            <input type="text" name="learner_k" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>Gender</label>
+                                            <select class="form-control" name="gender" required>
+                                                <option>Select Gender</option>
+                                                <option value="F">Female</option>
+                                                <option value="M">Male</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>Religion</label>
+                                            <select class="form-control" name="religion" required>
+                                                <option>Select Religion</option>
+                                                <option value=   "C" >Catholic</option>
+                                                <option value=  "A" >Anglican </option>
+                                                    <option value=   "M">Muslim </option>
+                                                        <option value= "S" >Seventhday</option>
+                                                            <option value= "BA">BornAgain </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                    
+                                            
+                                            <label>Class</label>
+                                            <select class="form-control" name="class_id" required>
+                                                <option>Select Class</option>
+                                                {% for i in classe %}
+                                                <option value="{{i.id}}">{{i.class_name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>Stream</label>
+                                            <div>
+                                                <input type="text" name="stream"  class="form-control"  not required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+
+                                            <label>Joining Date</label>
+                                            <div>
+                                                <input type="date" name="joining_date" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            
+                                            <label>Admission Number</label>
+                                            <input type="text" name="admission_number" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>Learner's Image</label>
+                                            <input type="file" name="profile_pic" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>Session  Year </label>
+                                            <select class="form-control" name="session_year_id" required>
+                                                <option>Select Session Year</option>
+                                                {% for i in session_year %}
+                                                <option value="{{i.id}}">{{i.session_start}} To {{i.session_end}}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                         <label>Section</label>
+                                            <select class="form-control" name="section" required>
+                                                <option>Select Section</option>
+                                                <option value="D">Day</option>
+                                                <option value="B">Boarding</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+
+                                   
+                                              <label>Nationality</label>
+                                            <input type="text" name="nationality" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                              <label>Health Issue </label>
+                                            <input type="text" name="health issue " class="form-control"  not required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+
+                                             <div class="col-12">
+                                        <h5 class="form-title"><span>Parent Information</span></h5>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                              
+                                            <label>Parent's Name</label>
+                                            <input type="text" name="parent's_name" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label>Relationshiop  with  learner</label>
+                                            <input type="text" name="Relationshiop  with the learner" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                           
+                                            <label>Parent's Mobile   Number </label>
+                                            <input type="text" name="parent's_mobile_number" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            
+                                            <label>Parent's Email</label>
+                                            <input type="email" name=" parent's email" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                           
+
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary">Add Learner</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}

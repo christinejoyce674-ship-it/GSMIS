@@ -1,0 +1,16 @@
+Project Title: Good-hope  School Management Information System (GSMIS)
+Developer: Nakiganda Christine J (23/U/13717/PS)
+Institution: Makerere University (COBAMS)
+Framework: Django 4.2+ / Python 3.10+
+Database: SQLite3
+
+
+
+First step: Download this project to your computer.
+
+Second step: Create a virtual environment for the project.
+
+Third step: Extract the downloaded project to the virtual environment you just created.
+
+Finally: Install Django using the command pip install django and install the project requirements using the command pip install -r requirements.txt
+

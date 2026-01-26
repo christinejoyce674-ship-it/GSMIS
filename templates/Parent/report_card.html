@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container no-print">
+    <button onclick="window.print()" class="btn btn-primary mb-4">
+        <i class="fas fa-print"></i> Print Report Card
+    </button>
+</div>
+
+<div class="report-container" style="border: 2px solid #000; padding: 30px; width: 850px; margin: auto; background-color: white; font-family: 'Times New Roman', Times, serif;">
+    
+    <div class="header" style="text-align: center;">
+        <img src="{% static 'images/school_logo.jpg' %}" alt="School Logo" style="width: 100px; height: 100px;">
+        <h1 style="margin: 5px 0; color: #1a237e;">GOOD HOPE NABULAGALA PRIMARY SCHOOL</h1>
+        <p style="margin: 2px;">P.O. Box 123, Mengo, Kampala, Uganda</p>
+        <p style="margin: 2px;">Tel: +256 772888739 | Website: www.goodhopenabulagala.com</p>
+        <h3 style="text-decoration: underline; margin-top: 15px;">END OF TERM REPORT</h3>
+    </div>
+
+    <div class="learner-info" style="display: flex; justify-content: space-between; margin-top: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+        <div>
+            <p><strong>Name:</strong> {{ learner.admin.first_name }} {{ learner.admin.last_name }}</p>
+            <p><strong>Class:</strong> {{ learner.classe_id.class_name }}</p>
+        </div>
+        <div style="text-align: right;">
+            <p><strong>Learner ID:</strong> {{ learner.id }}</p>
+            <p><strong>Term:</strong> {{ records.0.term|default:"End of Term" }}</p>
+        </div>
+    </div>
+    
+    <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px; text-align: center;">
+        <thead style="background-color: #f2f2f2;">
+            <tr>
+                <th style="padding: 10px;">Subject</th>
+                <th>Mid Term (40)</th>
+                <th>End Term (60)</th>
+                <th>Total (100)</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td style="padding: 8px; text-align: left;">{{ record.subject.subject_name }}</td>
+                <td>{{ record.mid }}</td>
+                <td>{{ record.eot }}</td>
+                <td><strong>{{ record.mid|add:record.eot }}</strong></td>
+                <td>
+                    {% with total=record.mid|add:record.eot %}
+                        {% if total >= 90 %} D1 {% elif total >= 80 %} D2
+                        {% elif total >= 70 %} C3 {% elif total >= 60 %} C4
+                        {% elif total >= 55 %} C5 {% elif total >= 50 %} C6
+                        {% elif total >= 45 %} P7 {% elif total >= 40 %} P8
+                        {% else %} F9 {% endif %}
+                    {% endwith %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No records found for this term.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot style="background-color: #f9f9f9; font-weight: bold;">
+            <tr>
+                <td colspan="3" style="text-align: right; padding: 10px;">AGGREGATE TOTAL:</td>
+                <td colspan="2">{{ total_marks }}</td>
+            </tr>
+        </tfoot>
+    </table>
+    
+
+    <div style="margin-top: 30px;">
+        <p><strong>Class Teacher's Remark:</strong> __________________________________________________</p>
+        <p><strong>Headteacher's Remark:</strong>  __________________________________________________</p>
+           <span style="font-style: italic; font-weight: bold; color: #2c3e50;">
+               {% if total_marks > 300 %} Excellent performance, keep it up! 
+               {% elif total_marks > 200 %} Good effort, aim higher next term.
+               {% else %} More effort required in core subjects. {% endif %}
+           </span>
+        </p>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+        <div style="text-align: center;">
+            <p>__________________________</p>
+            <p>Class Teacher</p>
+        </div>
+        <div style="text-align: center;">
+            <p>__________________________</p>
+            <p>Headteacher's Signature & Stamp</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Professional Styling for Print */
+    @media print {
+        .no-print, .sidebar, .header-navbar, .footer {
+            display: none !important;
+        }
+        body {
+            background-color: white !important;
+        }
+        .report-container {
+            border: none !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    }
+</style>
+{% endblock %}

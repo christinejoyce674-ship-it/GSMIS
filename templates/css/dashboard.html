@@ -1,0 +1,49 @@
+<style>
+    .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; }
+    .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+    .card h2 { color: #2980b9; margin: 0; }
+    .card p { font-size: 1.2rem; font-weight: bold; }
+</style>
+<!-- SIDEBAR -->
+    {% include "_sidebar.html" %}
+
+    <div class="page-container">
+      <!-- HEADER  START -->
+      {% include "_dashboard.html" %}
+      <!-- HEADER  END -->
+
+      <main class="main-content bgc-grey-100">
+        <div id="mainContent">
+          {% block dashboard-body %}
+
+            <div class="row gap-20 masonry pos-r">
+              <div class="masonry-sizer col-md-6"></div>
+              <div class="masonry-item w-100">
+                <div class="row gap-20">
+                  <div class="col-md-3">
+                    <div class="layers bd bgc-white p-20">
+                      <div class="layer w-100 mB-10">
+<div class="grid-container">
+    <div class="card">
+        <h2>Total learners</h2>
+        <p>{{ total_learners }}</p>
+    </div>
+    <div class="card">
+        <h2>Pass Rate</h2>
+        <p>{{ pass_count }} Learners</p>
+    </div>
+    <div class="card" style="border-left: 5px solid red;">
+        <h2>Needs Attention</h2>
+        <p>{{ fail_count }} Learners</p>
+    </div>
+</div>
+
+<h3>Performance by Class</h3>
+<table>
+    {% for class in class_averages %}
+    <tr>
+        <td>Class {{ class.learner__class_name }}</td>
+        <td>Average: {{ class.avg_score|floatformat:1 }}%</td>
+    </tr>
+    {% endfor %}
+</table>

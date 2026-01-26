@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+   <div class="row align-items-center">
+      <div class="col">
+         <h3 class="page-title">School Notifications</h3>
+         <p class="text-muted">Stay updated with the latest announcements from Good Hope Nabulagala.</p>
+      </div>
+   </div>
+</div>
+
+{% include "includes/messages.html" %}
+
+<div class="row">
+   <div class="col-sm-12">
+      <div class="card">
+         <div class="card-body">
+            <div class="table-responsive">
+               <table class="table table-hover table-center mb-0">
+                  <thead>
+                     <tr>
+                        <th style="width: 20%;">Date</th>
+                        <th>Message from School</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                   {% for i in notifications %}
+                     <tr>
+                        <td>{{ i.created_at|date:"d M Y, H:i" }}</td>
+                        <td>{{ i.message }}</td>
+                     </tr> 
+                   {% empty %}
+                     <tr>
+                        <td colspan="2" class="text-center">No notifications found.</td>
+                     </tr>
+                   {% endfor %} 
+                  </tbody>
+               </table>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+{% endblock %}

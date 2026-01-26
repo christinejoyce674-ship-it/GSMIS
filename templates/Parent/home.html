@@ -1,0 +1,8 @@
+<!doctype html>
+<html>
+<head><title>Parent Home</title></head>
+<body>
+  <h1>Welcome, {{ request.user.get_full_name|default:request.user.username }} (Parent)</h1>
+  <p>This is the parents' area.</p>
+</body>
+</html>

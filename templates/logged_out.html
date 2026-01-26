@@ -1,0 +1,11 @@
+{% load static %}
+{% block content %}
+<div class="container text-center my-5">
+    <h1 class="display-5">You're logged out</h1>
+    <p class="lead">You have successfully signed out of your account.</p>
+    <p>
+        <a href="{% url 'login' %}" class="btn btn-primary" role="button" aria-label="Sign in again">Sign in again</a>
+        <a href="{% url 'HOME' %}" class="btn btn-link" role="button" aria-label="Return to homepage">Return to homepage</a>
+    </p>
+</div>
+{% endblock %}

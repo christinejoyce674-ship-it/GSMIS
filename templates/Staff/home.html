@@ -1,0 +1,8 @@
+<!doctype html>
+<html>
+<head><title>Teacher Home</title></head>
+<body>
+  <h1>Welcome, {{ request.user.get_full_name|default:request.user.username }} (Teacher)</h1>
+  <p>This is the teachers' area.</p>
+</body>
+</html>
