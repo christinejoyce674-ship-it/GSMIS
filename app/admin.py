@@ -84,4 +84,4 @@ admin.site.register(staff_notification)
 admin.site.register(staff_feedback)
 admin.site.register(parent_notification)
 admin.site.register(parent_feedback)
-admin.site.register(parent_feedback)
+
