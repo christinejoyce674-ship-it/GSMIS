@@ -1,35 +1,73 @@
 {% extends 'base.html' %}
-{% block content %}
-<div class="page-header">
-    <h3>Welcome, {{ user.first_name }}</h3>
-    <p class="text-muted">Parent Portal - Good Hope Nabulagala</p>
-</div>
 
-<div class="row">
-    {% for child in children %}
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body text-center">
-                {% if child.admin.profile_pic %}
-                    <img src="{{ child.admin.profile_pic.url }}" class="rounded-circle mb-3" width="100" height="100" style="object-fit: cover;">
-                {% else %}
-                    <div class="bg-light rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width:100px; height:100px;">
-                        <i class="fas fa-user fa-3x text-secondary"></i>
-                    </div>
-                {% endif %}
-                <h4>{{ child.admin.first_name }} {{ child.admin.last_name }}</h4>
-                <p class="badge bg-info text-dark">{{ child.classe_id.class_name }}</p>
-                <hr>
-                <a href="{% url 'report_card' child.id %}" class="btn btn-outline-primary w-100">
-                    <i class="fas fa-file-invoice"></i> View Report Card
+{% block content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Hello, {{ user.first_name }}!</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active">Parent Portal - Tracking Academic Excellence</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="{% url 'app:doLogout' %}" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </div>
         </div>
     </div>
-    {% empty %}
-    <div class="col-12 text-center">
-        <div class="alert alert-warning">No children linked to this account. Please contact the Office.</div>
+
+    <div class="row">
+        {% for learner in children %}
+        <div class="col-md-4 col-sm-6 col-12 d-flex">
+            <div class="card shadow-sm w-100">
+                <div class="card-body text-center">
+                    <div class="user-avatar mb-3">
+                        <i class="fas fa-user-graduate fa-4x text-primary"></i>
+                    </div>
+                    <h4 class="mb-1">{{ learner.first_name }} {{ learner.last_name }}</h4>
+                    <p class="badge badge-pill badge-info mb-3">{{ learner.classe_id.class_name }}</p>
+                    <div class="text-muted small mb-3">
+                        Use the button below to view academic performance and report cards.
+                    </div>
+                    <a href="{% url 'app:view_report_card' Learner.id %}" class="btn btn-primary btn-block">
+                        <i class="fas fa-file-invoice"></i> View Academic Records
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-custom alert-warning" role="alert">
+                <div class="alert-text">
+                    <strong>No learners found!</strong> There are no students linked to this parent account. Please contact the administrator.
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+
+    {% if notifications %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card card-table">
+                <div class="card-header">
+                    <h5 class="card-title">Recent Notifications</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for note in notifications %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ note.message }}</span>
+                            <span class="badge badge-light badge-pill">{{ note.created_at|date:"M d, Y" }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
