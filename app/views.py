@@ -1,57 +1,53 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout as auth_logout, authenticate
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from app.EmailBackEnd import EmailBackEnd
-from app.models import CustomUser
 
 
+def home(request):
+    return render(request, "home.html")
+
+def landing(request):
+    return render(request, "landing.html")
 
 def login_page(request):
     if request.user.is_authenticated:
-        if request.user.user_type == '1':
-            return redirect('admin_dashboard')
-        elif request.user.user_type == '2':
-          return redirect('teacher_home')
-    elif request.user.user_type == '3':
-         return redirect('parent_dashboard')
-        
+        u_type = str(request.user.user_type)
+        if u_type == '1' or u_type == '4':
+            return redirect('app:hod_home')
+        elif u_type == '2':
+            return redirect('app:teacher_home')
+        elif u_type == '3':
+            return redirect('app:parent_dashboard')
+    return render(request, 'login.html')
 
 def doLogin(request):
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
-        
-        user = EmailBackEnd.authenticate(
-            request,
-            username=email,
-            password=password
-        )
+        user = authenticate(request, username=email, password=password)
         
         if user is not None:
+            # Login the user - Django will create a new session
             login(request, user)
-            user_type = user.user_type
-            if user_type == '1':
-                return redirect('admin_dashboard')
-            elif user_type == '2':
-                return redirect('teacher_home')
-            elif user_type == '3':
-                return redirect('parent_dashboard')
+            
+            # Get user type and redirect accordingly
+            u_type = str(user.user_type)
+            if u_type == '1' or u_type == '4':
+                return redirect('app:hod_home')
+            elif u_type == '2':
+                return redirect('app:teacher_home')
+            elif u_type == '3':
+                return redirect('app:parent_dashboard')
+            else:
+                messages.error(request, 'Invalid user type!')
+                return redirect('app:login')
         else:
             messages.error(request, 'Invalid Email or Password!')
-            return redirect('login')
+            return redirect('app:login')
             
-    return redirect('login')
+    return redirect('app:login')
 
-def doLogout(request):
-    logout(request)
-    messages.info(request, "Logged out successfully.")
-    return redirect('login')
-
-
-
-def error_404(request, exception):
-    return render(request, '404.html', status=404)
-
-def error_500(request):
-    return render(request, '500.html', status=500)
+def logout(request):
+    auth_logout(request)
+    messages.success(request, "Logged out successfully!")
+    return redirect('app:login')

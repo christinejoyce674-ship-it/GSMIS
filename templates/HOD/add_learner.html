@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Add Learner</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:view_learners' %}">Learners</a></li>
+                    <li class="breadcrumb-item active">Add Learner</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="col-12">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="{% url 'app:add_learner' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Basic Information</span></h5>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" name="first_name" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" name="last_name" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Learner ID</label>
+                                    <input type="text" name="learner_id" class="form-control" placeholder="e.g. L001"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Gender</label>
+                                    <select class="form-control" name="gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Date of Birth</label>
+                                    <input type="date" name="date_of_birth" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Religion</label>
+                                    <select class="form-control" name="religion" required>
+                                        <option value="">Select Religion</option>
+                                        <option value="C">Catholic</option>
+                                        <option value="A">Anglican</option>
+                                        <option value="M">Muslim</option>
+                                        <option value="S">Seventh Day</option>
+                                        <option value="BA">Born Again</option>
+                                        <option value="O">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Nationality</label>
+                                    <input type="text" name="nationality" value="Ugandan" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Academic Details</span></h5>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Class</label>
+                                    <select class="form-control" name="classe_id" required>
+                                        <option value="">Select Class</option>
+                                        {% for i in classe %}
+                                        <option value="{{i.id}}">{{i.class_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Section</label>
+                                    <select class="form-control" name="section" required>
+                                        <option value="D">Day</option>
+                                        <option value="B">Boarding</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Session Year</label>
+                                    <select class="form-control" name="session_year_id" required>
+                                        <option value="">Select Session</option>
+                                        {% for s in sessions %}
+                                        <option value="{{s.id}}">{{s.session_start}} - {{s.session_end}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Parent & Health Information</span></h5>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Parent/Guardian</label>
+                                    <select class="form-control" name="parent_id">
+                                        <option value="">Select Parent</option>
+                                        {% for p in parents %}
+                                        <option value="{{p.id}}">{{p.admin.first_name}} {{p.admin.last_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Relationship with Learner</label>
+                                    <input type="text" name="relationship_with_learner" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Parent Mobile Number</label>
+                                    <input type="text" name="parent_mobile_number" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Health Issue (If any)</label>
+                                    <input type="text" name="health_issue" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-12 text-right">
+                                <button type="submit" class="btn btn-primary">Save Learner</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

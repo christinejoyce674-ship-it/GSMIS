@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Class Performance Statistics</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:hod_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'app:hod_broadsheet' target_class.id %}">{{ target_class.class_name }}</a></li>
+                    <li class="breadcrumb-item active">Statistics</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Term Selection -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" class="form-inline">
+                        <label class="mr-2">Select Term:</label>
+                        <select name="term" class="form-control mr-2" onchange="this.form.submit()">
+                            <option value="">-- Choose Term --</option>
+                            {% for term in available_terms %}
+                            <option value="{{ term }}" {% if term == selected_term %}selected{% endif %}>
+                                Term {{ term }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Summary -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">{{ target_class.class_name }} - Term {{ selected_term }} Statistics</h4>
+                    <small>Total Learners: {{ total_learners }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject Statistics Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Subject Performance Analysis</h5>
+                </div>
+                <div class="card-body">
+                    {% if subject_statistics %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th rowspan="2" class="align-middle">Subject</th>
+                                    <th rowspan="2" class="align-middle text-center">Students</th>
+                                    <th colspan="3" class="text-center bg-info text-white">Mid-Term (MID)</th>
+                                    <th colspan="3" class="text-center bg-warning">End of Term (EOT)</th>
+                                    <th colspan="3" class="text-center bg-success text-white">Final Mark</th>
+                                </tr>
+                                <tr>
+                                    <!-- MID -->
+                                    <th class="text-center">Mean</th>
+                                    <th class="text-center">Median</th>
+                                    <th class="text-center">Std Dev</th>
+                                    <!-- EOT -->
+                                    <th class="text-center">Mean</th>
+                                    <th class="text-center">Median</th>
+                                    <th class="text-center">Std Dev</th>
+                                    <!-- Final -->
+                                    <th class="text-center">Mean</th>
+                                    <th class="text-center">Median</th>
+                                    <th class="text-center">Std Dev</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in subject_statistics %}
+                                <tr>
+                                    <td><strong>{{ stat.subject.subject_name }}</strong></td>
+                                    <td class="text-center">{{ stat.count }}</td>
+                                    <!-- MID -->
+                                    <td class="text-center">{{ stat.mid_mean }}</td>
+                                    <td class="text-center">{{ stat.mid_median }}</td>
+                                    <td class="text-center">{{ stat.mid_std_dev }}</td>
+                                    <!-- EOT -->
+                                    <td class="text-center">{{ stat.eot_mean }}</td>
+                                    <td class="text-center">{{ stat.eot_median }}</td>
+                                    <td class="text-center">{{ stat.eot_std_dev }}</td>
+                                    <!-- Final -->
+                                    <td class="text-center">{{ stat.final_mean }}</td>
+                                    <td class="text-center">{{ stat.final_median }}</td>
+                                    <td class="text-center">{{ stat.final_std_dev }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Statistics Legend -->
+                    <div class="mt-4">
+                        <h6>Understanding the Statistics:</h6>
+                        <ul class="small">
+                            <li><strong>Mean:</strong> Average score of all students in the subject</li>
+                            <li><strong>Median:</strong> Middle value when scores are arranged in order</li>
+                            <li><strong>Standard Deviation (Std Dev):</strong> Measure of score variation (lower = more consistent performance)</li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> No statistics available for this term. Please ensure marks have been entered.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <a href="{% url 'app:hod_broadsheet' target_class.id %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Broadsheet
+            </a>
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="fas fa-print"></i> Print Statistics
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .btn, .breadcrumb, .page-header, form {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+{% endblock %}

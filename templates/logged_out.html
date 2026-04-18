@@ -1,11 +1,27 @@
+{% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container text-center my-5">
-    <h1 class="display-5">You're logged out</h1>
-    <p class="lead">You have successfully signed out of your account.</p>
-    <p>
-        <a href="{% url 'login' %}" class="btn btn-primary" role="button" aria-label="Sign in again">Sign in again</a>
-        <a href="{% url 'HOME' %}" class="btn btn-link" role="button" aria-label="Return to homepage">Return to homepage</a>
-    </p>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-5">
+                <div class="mb-4">
+                    <i class="fas fa-check-circle text-success fa-4x"></i>
+                </div>
+                <h1 class="display-5">You're logged out</h1>
+                <p class="lead">You have successfully signed out of your account.</p>
+                <hr>
+                <p class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'app:login' %}" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Sign in again
+                    </a>
+                    <a href="{% url 'app:home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home"></i> Return to Dashboard
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

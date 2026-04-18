@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header no-print">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5 class="page-title">
+                    <i class="fas fa-table me-2"></i>{{ target_class.get_class_name_display }} - Broadsheet
+                </h5>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:hod_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Broadsheet</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="{% url 'app:hod_class_statistics' target_class.id %}" class="btn btn-outline-info btn-sm mr-2">
+                    <i class="fas fa-chart-bar"></i> View Statistics
+                </a>
+                <button onclick="window.print()" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-header">
+                    <h5 class="card-title">{{ target_class.get_class_name_display }} — All Learners</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Learner ID</th>
+                                    <th>Full Name</th>
+                                    <th>Gender</th>
+                                    <th>Section</th>
+                                    <th>Fees Status</th>
+                                    <th class="text-right no-print">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for learner in learners %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td><code>{{ learner.learner_id }}</code></td>
+                                    <td>{{ learner.first_name }} {{ learner.last_name }}</td>
+                                    <td>{{ learner.get_gender_display }}</td>
+                                    <td>{{ learner.get_section_display }}</td>
+                                    <td>
+                                        {% if learner.fees_paid %}
+                                        <span class="badge badge-success">Paid</span>
+                                        {% else %}
+                                        <span class="badge badge-danger">Unpaid</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-right no-print">
+                                        <div class="actions">
+                                            <a href="{% url 'app:hod_learner_report' learner.id %}"
+                                                class="btn btn-sm bg-success-light mr-2">
+                                                <i class="fas fa-file-alt"></i> Report
+                                            </a>
+                                            <a href="{% url 'app:hod_toggle_fees' learner.id %}"
+                                                class="btn btn-sm {% if learner.fees_paid %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                                                <i class="fas fa-money-bill-wave"></i> {% if learner.fees_paid %}Block{%
+                                                else %}Clear{% endif %}
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No learners enrolled in this class.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .main-wrapper,
+        .page-wrapper,
+        .content,
+        .container-fluid,
+        .row,
+        .col-sm-12,
+        .card,
+        .card-body {
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+{% endblock %}

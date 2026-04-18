@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header no-print">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Academic Report Card</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:parent_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Report Card</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="fas fa-print"></i> Print Report Card
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Term Filter -->
+    <div class="row no-print mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body py-2">
+                    <form method="get" class="form-inline">
+                        <label class="mr-2">Select Term:</label>
+                        <select name="term" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
+                            <option value="">All Terms</option>
+                            {% for term in available_terms %}
+                            <option value="{{ term }}" {% if selected_term == term %}selected{% endif %}>
+                                Term {{ term }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="report-container"
+                        style="padding: 30px; max-width: 850px; margin: auto; background-color: white; font-family: 'Times New Roman', Times, serif; color: #333;">
+
+                        <!-- Header with Logo and School Info -->
+                        <div style="display: flex; align-items: center; border-bottom: 3px solid #1a237e; padding-bottom: 15px; margin-bottom: 20px;">
+                            <div style="flex-shrink: 0; margin-right: 20px;">
+                                <img src="{% static 'images/school-logo.jpg' %}" alt="School Logo"
+                                    style="width: 90px; height: 90px; object-fit: contain;">
+                            </div>
+                            <div style="flex-grow: 1; text-align: center;">
+                                <h1 style="margin: 0 0 5px 0; color: #1a237e; font-size: 24px; text-transform: uppercase; font-weight: bold; line-height: 1.2;">
+                                    GOOD HOPE NABULAGALA PRIMARY SCHOOL</h1>
+                                <p style="margin: 2px 0; font-size: 12px;">P.O. Box 123, Mengo, Kampala, Uganda</p>
+                                <p style="margin: 2px 0; font-size: 12px;">Tel: +256 772888739 | Email: info@goodhopenabulagala.com</p>
+                                <h3 style="margin: 10px 0 0 0; color: #d32f2f; font-size: 16px; font-weight: bold; text-decoration: underline;">
+                                    END OF TERM ACADEMIC REPORT</h3>
+                            </div>
+                        </div>
+
+                        <!-- Learner Information -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; font-size: 14px; background-color: #f8f9fa; padding: 15px; border-radius: 5px;">
+                            <div>
+                                <p style="margin: 3px 0;"><strong>Learner's Name:</strong> {{ learner.first_name }} {{ learner.last_name }}</p>
+                                <p style="margin: 3px 0;"><strong>Class:</strong> {{ learner.classe_id.get_class_name_display }}</p>
+                                <p style="margin: 3px 0;"><strong>Gender:</strong> {{ learner.get_gender_display }}</p>
+                                {% if position and total_learners %}
+                                <p style="margin: 3px 0;"><strong>Position:</strong> {{ position }} out of {{ total_learners }}</p>
+                                {% endif %}
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="margin: 3px 0;"><strong>Learner ID:</strong> {{ learner.learner_id }}</p>
+                                <p style="margin: 3px 0;"><strong>Term:</strong> {% if selected_term %}Term {{ selected_term }}{% else %}All Terms{% endif %}</p>
+                                <p style="margin: 3px 0;"><strong>Total Subjects:</strong> {{ total_subjects }}</p>
+                                <p style="margin: 3px 0;"><strong>Average:</strong> {{ average_mark|floatformat:1 }}%</p>
+                            </div>
+                        </div>
+
+                        <!-- Marks Table -->
+                        <div style="margin-bottom: 20px;">
+                            <table border="1" style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid #000; font-size: 13px;">
+                                <thead style="background-color: #1a237e; color: white;">
+                                    <tr>
+                                        <th style="padding: 8px; border: 1px solid #000;">SUBJECT</th>
+                                        <th style="padding: 8px; border: 1px solid #000;">MID</th>
+                                        <th style="padding: 8px; border: 1px solid #000;">EOT</th>
+                                        <th style="padding: 8px; border: 1px solid #000;">FINAL</th>
+                                        <th style="padding: 8px; border: 1px solid #000;">GRADE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in records %}
+                                    <tr>
+                                        <td style="padding: 8px; text-align: left; border: 1px solid #000;"><strong>{{ record.subject.subject_name }}</strong></td>
+                                        <td style="border: 1px solid #000;">{{ record.mid|floatformat:0 }}</td>
+                                        <td style="border: 1px solid #000;">{{ record.eot|floatformat:0 }}</td>
+                                        <td style="border: 1px solid #000;"><strong>{{ record.final_weighted_mark|floatformat:1 }}</strong></td>
+                                        <td style="border: 1px solid #000; font-weight: bold; font-size: 14px; color: 
+                                            {% if record.score == 'D1' or record.score == 'D2' %}#2e7d32
+                                            {% elif record.score == 'C3' or record.score == 'C4' or record.score == 'C5' or record.score == 'C6' %}#1976d2
+                                            {% elif record.score == 'P7' or record.score == 'P8' %}#f57c00
+                                            {% else %}#c62828{% endif %};">
+                                            {{ record.score|default:"N/A" }}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" style="padding: 15px; border: 1px solid #000;">No records found for this term.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot style="background-color: #f5f5f5; font-weight: bold;">
+                                    <tr>
+                                        <td colspan="3" style="text-align: right; padding: 8px; border: 1px solid #000;">TOTAL:</td>
+                                        <td style="padding: 8px; border: 1px solid #000;">{{ total_marks|floatformat:1 }}</td>
+                                        <td style="padding: 8px; border: 1px solid #000;">AVG: {{ average_mark|floatformat:1 }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Grading Key -->
+                        <div style="background-color: #f0f4f8; padding: 10px; border-left: 4px solid #1a237e; margin-bottom: 15px; font-size: 11px;">
+                            <strong style="display: block; margin-bottom: 5px; color: #1a237e;">Grading Scale:</strong>
+                            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;">
+                                <div><strong>D1:</strong> 90-100</div>
+                                <div><strong>D2:</strong> 80-89</div>
+                                <div><strong>C3:</strong> 70-79</div>
+                                <div><strong>C4:</strong> 60-69</div>
+                                <div><strong>C5:</strong> 55-59</div>
+                                <div><strong>C6:</strong> 50-54</div>
+                                <div><strong>P7:</strong> 45-49</div>
+                                <div><strong>P8:</strong> 40-44</div>
+                                <div><strong>F9:</strong> 0-39</div>
+                            </div>
+                        </div>
+
+                        {% if term_summary %}
+                        <!-- Attendance -->
+                        <div style="background-color: #fff3cd; padding: 10px; border-left: 4px solid #ffc107; margin-bottom: 15px; font-size: 13px;">
+                            <strong>Attendance:</strong> Days Present: {{ term_summary.days_present }} | Days Absent: {{ term_summary.days_absent }}
+                        </div>
+                        
+                        <!-- Comments and Remarks -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="margin-bottom: 10px;">
+                                <strong style="font-size: 13px;">Class Teacher's Comment:</strong>
+                                <div style="border: 1px solid #ddd; padding: 10px; background-color: #fafafa; min-height: 50px; font-size: 12px; margin-top: 5px;">
+                                    {{ term_summary.teacher_comment|default:"No comment provided." }}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <strong style="font-size: 13px;">Head Teacher's Remark:</strong>
+                                <div style="border: 1px solid #ddd; padding: 10px; background-color: #fafafa; min-height: 50px; font-size: 12px; margin-top: 5px;">
+                                    {{ term_summary.headteacher_remark|default:"Promising. Keep up the struggle." }}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div style="margin-bottom: 15px;">
+                            <p style="margin: 10px 0; font-size: 13px;"><strong>Class Teacher's Comment:</strong> 
+                                <span style="border-bottom: 1px solid #000; display: inline-block; width: 350px;">&nbsp;</span>
+                            </p>
+                            <p style="margin: 10px 0; font-size: 13px;"><strong>Head Teacher's Remark:</strong> 
+                                <span style="border-bottom: 1px solid #000; display: inline-block; width: 360px;">&nbsp;</span>
+                            </p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Signatures -->
+                        <div style="display: flex; justify-content: space-between; margin-top: 40px; font-size: 12px;">
+                            <div style="text-align: center; width: 180px;">
+                                <div style="border-top: 2px solid #000; padding-top: 5px; margin-top: 30px; font-weight: bold;">Class Teacher</div>
+                            </div>
+                            <div style="text-align: center; width: 200px;">
+                                <div style="border-top: 2px solid #000; padding-top: 5px; margin-top: 30px; font-weight: bold;">Head Teacher (Stamp)</div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div style="text-align: center; margin-top: 20px; font-size: 10px; color: #666; border-top: 1px solid #ddd; padding-top: 10px;">
+                            <p style="margin: 0;">Report generated on: {% now "d M Y" %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .no-print,
+        .sidebar,
+        .header-navbar,
+        .footer,
+        .header,
+        .page-header {
+            display: none !important;
+        }
+
+        .main-wrapper,
+        .page-wrapper,
+        .content,
+        .container-fluid,
+        .row,
+        .col-md-12,
+        .card,
+        .card-body {
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        body {
+            background-color: white !important;
+        }
+
+        .report-container {
+            padding: 15px !important;
+            max-width: 100% !important;
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+    }
+</style>
+{% endblock %}

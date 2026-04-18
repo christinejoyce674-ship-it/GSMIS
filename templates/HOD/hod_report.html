@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load report_filters %}
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header no-print">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5 class="page-title">
+                    <i class="fas fa-user-graduate me-2"></i>
+                    {{ learner.first_name }} {{ learner.last_name }} — Academic Report
+                </h5>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:hod_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Learner Report</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <button onclick="window.print()" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-table">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="card-title">{{ learner.first_name }} {{ learner.last_name }}</h5>
+                            <p class="mb-0 text-muted">
+                                <strong>ID:</strong> {{ learner.learner_id }} |
+                                <strong>Class:</strong> {{ learner.classe_id.get_class_name_display }} |
+                                <strong>Gender:</strong> {{ learner.get_gender_display }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-right no-print">
+                            <form method="post" action="{% url 'app:hod_toggle_fees' learner.id %}"
+                                class="form-inline float-right">
+                                {% csrf_token %}
+                                <div class="form-group mr-2">
+                                    <label class="mr-2">Fees:</label>
+                                    <select name="fees_paid" class="form-control form-control-sm">
+                                        <option value="yes" {% if learner.fees_paid %}selected{% endif %}>Paid</option>
+                                        <option value="no" {% if not learner.fees_paid %}selected{% endif %}>Unpaid
+                                        </option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="p-3">
+                        <strong>Fees Status:</strong>
+                        {% if learner.fees_paid %}
+                        <span class="badge badge-success">Paid (Access Unlocked)</span>
+                        {% else %}
+                        <span class="badge badge-danger">Not Paid (Marks Blocked)</span>
+                        {% endif %}
+                    </div>
+
+                    {% regroup records by term as term_records %}
+                    {% for term_group in term_records %}
+                    <div class="table-responsive mt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3 ml-3">
+                            <h4 class="text-primary">Term {{ term_group.grouper }} Results</h4>
+                            {% if term_stats %}
+                            <div class="text-muted">
+                                <strong>Average:</strong> {{ term_stats|get_item:term_group.grouper|get_item:'average'|default:'N/A' }} | 
+                                <strong>Subjects:</strong> {{ term_stats|get_item:term_group.grouper|get_item:'count'|default:0 }}
+                                {% with position=term_stats|get_item:term_group.grouper|get_item:'position' %}
+                                {% with total=term_stats|get_item:term_group.grouper|get_item:'total_learners' %}
+                                {% if position and total %}
+                                | <strong>Position:</strong> {{ position }} out of {{ total }}
+                                {% endif %}
+                                {% endwith %}
+                                {% endwith %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <table class="table table-hover table-center mb-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Mid-Term</th>
+                                    <th>End of Term</th>
+                                    <th>Final Mark</th>
+                                    <th>Grade</th>
+                                    <th>Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in term_group.list %}
+                                <tr>
+                                    <td><strong>{{ record.subject.subject_name }}</strong></td>
+                                    <td>{{ record.mid|floatformat:1 }}</td>
+                                    <td>{{ record.eot|floatformat:1 }}</td>
+                                    <td><strong>{{ record.final_weighted_mark|floatformat:1 }}</strong></td>
+                                    <td>
+                                        <span class="badge badge-pill 
+                                            {% if record.score == 'D1' or record.score == 'D2' %}badge-success
+                                            {% elif record.score == 'C3' or record.score == 'C4' or record.score == 'C5' or record.score == 'C6' %}badge-primary
+                                            {% elif record.score == 'P7' or record.score == 'P8' %}badge-warning
+                                            {% else %}badge-danger{% endif %}">
+                                            {{ record.score|default:"N/A" }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            {% if record.score == 'D1' %}D1
+                                            {% elif record.score == 'D2' %}D2
+                                            {% elif record.score == 'C3' %}C3
+                                            {% elif record.score == 'C4' %}C4
+                                            {% elif record.score == 'C5' %}C5
+                                            {% elif record.score == 'C6' %}C6
+                                            {% elif record.score == 'P7' %}P7
+                                            {% elif record.score == 'P8' %}P8
+                                            {% elif record.score == 'F9' %}F9
+                                            {% else %}N/A{% endif %}
+                                        </small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% for summary in summaries %}
+                    {% if summary.term == term_group.grouper %}
+                    <div class="bg-light p-3 border-top">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>Days Present:</strong> {{ summary.days_present }} |
+                                <strong>Absent:</strong> {{ summary.days_absent }}
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Class Teacher's Comment:</strong><br>
+                                <small>{{ summary.teacher_comment|default:"No comment" }}</small>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Head Teacher's Remark:</strong><br>
+                                <small>{{ summary.headteacher_remark|default:"No remark" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+
+                    <div class="no-print mt-2 mb-4 ml-3">
+                        <a href="{% url 'app:hod_term_summary' learner.id term_group.grouper %}"
+                            class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Edit Remarks for Term {{ term_group.grouper }}
+                        </a>
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-info m-3">No academic records found for this learner.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .main-wrapper,
+        .page-wrapper,
+        .content,
+        .container-fluid,
+        .row,
+        .col-md-12,
+        .card,
+        .card-body {
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+{% endblock %}

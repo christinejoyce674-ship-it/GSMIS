@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">School Performance Dashboard</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active">Administrator Portal</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-cogs"></i> Django Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-one">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>{{ total_learners }}</h3>
+                            <h6>Total Learners</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-two">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>{{ pass_count }}</h3>
+                            <h6>Passing</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-three">
+                <div class="card-body">
+                    <div class="db-widgets d-flex justify-content-between align-items-center">
+                        <div class="db-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="db-info">
+                            <h3>{{ fail_count }}</h3>
+                            <h6>Failing</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 d-flex">
+            <div class="card flex-fill shadow-sm p-4">
+                <div class="card-header">
+                    <h5 class="card-title">Overall Pass/Fail Ratio</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="passFailChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7 d-flex">
+            <div class="card flex-fill shadow-sm p-4">
+                <div class="card-header">
+                    <h5 class="card-title">Average Scores by Class</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="classBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ class_labels|json_script:"classLabels" }}
+{{ class_scores|json_script:"classScores" }}
+{{ pass_count|json_script:"passCount" }}
+{{ fail_count|json_script:"failCount" }}
+{% endblock %}
+
+{% block custom_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for Pass/Fail Pie Chart
+    const passCount = JSON.parse(document.getElementById('passCount').textContent);
+    const failCount = JSON.parse(document.getElementById('failCount').textContent);
+
+    const passFailCtx = document.getElementById('passFailChart').getContext('2d');
+    new Chart(passFailCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Pass', 'Fail'],
+            datasets: [{
+                data: [passCount, failCount],
+                backgroundColor: ['#198754', '#dc3545'],
+                hoverOffset: 4
+            }]
+        },
+        options: { maintainAspectRatio: false }
+    });
+
+    // Data for Class Performance Bar Chart
+    const classLabels = JSON.parse(document.getElementById('classLabels').textContent);
+    const classScores = JSON.parse(document.getElementById('classScores').textContent);
+
+    const classBarCtx = document.getElementById('classBarChart').getContext('2d');
+    new Chart(classBarCtx, {
+        type: 'bar',
+        data: {
+            labels: classLabels,
+            datasets: [{
+                label: 'Average Score (%)',
+                data: classScores,
+                backgroundColor: '#0d6efd',
+                borderRadius: 5
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, max: 100 } }
+        }
+    });
+</script>
+{% endblock %}

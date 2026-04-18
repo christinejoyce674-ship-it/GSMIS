@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Good Hope Nabulagala School Management  Information System</title>
+<body>
+    
+    <div class="sidebar">
+       
+        <a href="{% url 'parent_notification' %}">Notifications</a>
+        <a href="{% url 'parent_feedback' %}">Send Feedback</a>
+    </div>
+
+    <div class="content">
+        {% block main_content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Add Subject</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:view_subject' %}">Subject</a></li>
+                    <li class="breadcrumb-item active">Add Subject</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="{% url 'app:add_subject' %}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="form-title"><span>Subject Information</span></h5>
+                            </div>
+
+                            {% if messages %}
+                            <div class="col-12 text-center">
+                                {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Subject Name</label>
+                                    <input type="text" name="subject_name" class="form-control"
+                                        placeholder="e.g. Mathematics" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Class</label>
+                                    <select class="form-control" name="classe_id" required>
+                                        <option value="">Select Class</option>
+                                        {% for i in classe %}
+                                        <option value="{{i.id}}">{{i.class_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label>Teacher (Staff)</label>
+                                    <select class="form-control" name="staff_id" required>
+                                        <option value="">Select Teacher</option>
+                                        {% for i in staff %}
+                                        <option value="{{i.id}}">{{i.admin.first_name}} {{i.admin.last_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-4 text-right">
+                                <button type="submit" class="btn btn-primary">Save Subject</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

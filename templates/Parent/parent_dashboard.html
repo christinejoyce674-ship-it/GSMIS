@@ -1,19 +1,33 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block content %}
+{% block main_content %}
 <div class="content container-fluid">
+    <!-- Welcome Banner with Image -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; overflow: hidden;">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3 class="mb-2" style="font-weight: 700;">Hello, {{ user.first_name }}!</h3>
+                            <p class="mb-0" style="opacity: 0.95;">Parent Portal - Tracking Academic Excellence</p>
+                        </div>
+                        <div class="col-md-4 text-end d-none d-md-block">
+                            <img src="{% static 'images/learners.jpg' %}" alt="Students" style="height: 100px; width: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col">
-                <h3 class="page-title">Hello, {{ user.first_name }}!</h3>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item active">Parent Portal - Tracking Academic Excellence</li>
+                    <li class="breadcrumb-item active">Your Children</li>
                 </ul>
-            </div>
-            <div class="col-auto float-right ml-auto">
-                <a href="{% url 'app:doLogout' %}" class="btn btn-outline-danger btn-sm">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
             </div>
         </div>
     </div>
@@ -29,10 +43,13 @@
                     <h4 class="mb-1">{{ learner.first_name }} {{ learner.last_name }}</h4>
                     <p class="badge badge-pill badge-info mb-3">{{ learner.classe_id.class_name }}</p>
                     <div class="text-muted small mb-3">
-                        Use the button below to view academic performance and report cards.
+                        Use the buttons below to view academic performance and report cards.
                     </div>
-                    <a href="{% url 'app:view_report_card' Learner.id %}" class="btn btn-primary btn-block">
-                        <i class="fas fa-file-invoice"></i> View Academic Records
+                    <a href="{% url 'app:view_report_card' learner.id %}" class="btn btn-primary btn-block mb-2">
+                        <i class="fas fa-file-invoice"></i> View Final Report Card
+                    </a>
+                    <a href="{% url 'app:view_midterm_report' learner.id %}" class="btn btn-info btn-block">
+                        <i class="fas fa-file-alt"></i> View Mid-Term Report
                     </a>
                 </div>
             </div>
@@ -41,33 +58,12 @@
         <div class="col-12 text-center">
             <div class="alert alert-custom alert-warning" role="alert">
                 <div class="alert-text">
-                    <strong>No learners found!</strong> There are no students linked to this parent account. Please contact the administrator.
+                    <strong>No learners found!</strong> There are no students linked to this parent account. Please
+                    contact the administrator.
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
-
-    {% if notifications %}
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card card-table">
-                <div class="card-header">
-                    <h5 class="card-title">Recent Notifications</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        {% for note in notifications %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>{{ note.message }}</span>
-                            <span class="badge badge-light badge-pill">{{ note.created_at|date:"M d, Y" }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

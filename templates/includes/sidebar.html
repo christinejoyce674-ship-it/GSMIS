@@ -2,61 +2,79 @@
     <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
-                <li class="menu-title"> 
-                    <span>Main Navigation</span>
-                </li>
+                <li class="menu-title"><span>Main Navigation</span></li>
 
-                {% if user.user_type == '1' %}
-                <li class="active"> 
-                    <a href="{% url 'admin_dashboard' %}"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+                {% if user.user_type == '1' or user.user_type == '4' %}
+                <li class="active">
+                    <a href="{% url 'app:hod_home' %}"><i class="fas fa-home"></i> <span>Dashboard</span></a>
+                </li>
+                <li>
+                    <a href="{% url 'app:view_learners' %}"><i class="fas fa-user-graduate"></i> <span>Learners</span></a>
+                </li>
+                <li>
+                    <a href="{% url 'app:view_staff' %}"><i class="fas fa-chalkboard-teacher"></i> <span>Staff</span></a>
+                </li>
+                <li>
+                    <a href="{% url 'app:view_parent' %}"><i class="fas fa-users"></i> <span>Parents</span></a>
+                </li>
+                <li>
+                    <a href="{% url 'app:view_class' %}"><i class="fas fa-university"></i> <span>Classes</span></a>
+                </li>
+                <li>
+                    <a href="{% url 'app:view_subject' %}"><i class="fas fa-book"></i> <span>Subjects</span></a>
+                </li>
+                <li>
+                    <a href="{% url 'app:view_session' %}"><i class="fas fa-calendar-alt"></i> <span>Sessions</span></a>
+                </li>
+                <li>
+                    <a href="{% url 'app:event' %}"><i class="fas fa-calendar-check"></i> <span>Events</span></a>
                 </li>
                 <li class="submenu">
-                    <a href="#"><i class="fas fa-user-graduate"></i> <span> Learners</span> <span class="menu-arrow"></span></a>
+                    <a href="#"><i class="fas fa-bell"></i> <span>Notifications</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="{% url 'view_learners' %}">Learner List</a></li>
-                        <li><a href="{% url 'add_learner' %}">Add Learner</a></li>
+                        <li><a href="{% url 'app:add_staff_notification' %}">Staff</a></li>
+                        <li><a href="{% url 'app:add_parent_notification' %}">Parents</a></li>
                     </ul>
                 </li>
                 <li class="submenu">
-                    <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Staff Management</span> <span class="menu-arrow"></span></a>
+                    <a href="#"><i class="fas fa-comment-dots"></i> <span>Feedback</span> <span class="menu-arrow"></span></a>
                     <ul>
-                        <li><a href="{% url 'add_staff' %}">Add Staff Member</a></li>
+                        <li><a href="{% url 'app:staff_feedback_view' %}">Staff</a></li>
+                        <li><a href="{% url 'app:parent_feedback_view' %}">Parents</a></li>
                     </ul>
-                </li>
-                <li> 
-                    <a href="{% url 'add_session' %}"><i class="fas fa-calendar-alt"></i> <span>Academic Sessions</span></a>
                 </li>
                 {% endif %}
 
                 {% if user.user_type == '2' %}
-                <li> 
-                    <a href="{% url 'teacher_home' %}"><i class="fas fa-home"></i> <span>Teacher Dashboard</span></a>
+                <li class="active">
+                    <a href="{% url 'app:teacher_home' %}"><i class="fas fa-home"></i> <span>Dashboard</span></a>
                 </li>
-                <li> 
-                    <a href="{% url 'upload_marks_csv' %}"><i class="fas fa-upload"></i> <span>Upload Marks (CSV)</span></a>
+                <li>
+                    <a href="{% url 'app:staff_notifications' %}"><i class="fas fa-bell"></i>
+                        <span>Notifications</span></a>
                 </li>
-                <li> 
-                    <a href="{% url 'staff_notification' %}"><i class="fas fa-bell"></i> <span>Staff Notifications</span></a>
-                </li>
-                <li> 
-                    <a href="{% url 'staff_feedback' %}"><i class="fas fa-comment-dots"></i> <span>My Feedback</span></a>
+                <li>
+                    <a href="{% url 'app:staff_feedback' %}"><i class="fas fa-comment-dots"></i>
+                        <span>Feedback</span></a>
                 </li>
                 {% endif %}
 
                 {% if user.user_type == '3' %}
-                <li> 
-                    <a href="{% url 'learner_portal' %}"><i class="fas fa-graduation-cap"></i> <span>Learner's Portal</span></a>
+                <li>
+                    <a href="{% url 'app:parent_dashboard' %}"><i class="fas fa-home"></i> <span>Dashboard</span></a>
                 </li>
-                <li> 
-                    <a href="{% url 'parent_notification' %}"><i class="fas fa-envelope-open-text"></i> <span>School Notices</span></a>
+                <li>
+                    <a href="{% url 'app:parent_notifications' %}"><i class="fas fa-bell"></i>
+                        <span>Notifications</span></a>
                 </li>
-                <li> 
-                    <a href="{% url 'parent_feedback' %}"><i class="fas fa-paper-plane"></i> <span>Send Feedback</span></a>
+                <li>
+                    <a href="{% url 'app:parent_feedback' %}"><i class="fas fa-comment-dots"></i>
+                        <span>Feedback</span></a>
                 </li>
                 {% endif %}
 
-                <li> 
-                    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+                <li>
+                    <a href="{% url 'app:logout' %}"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
                 </li>
             </ul>
         </div>

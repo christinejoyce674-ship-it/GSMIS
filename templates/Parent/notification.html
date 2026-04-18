@@ -1,41 +1,51 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="page-header">
-   <div class="row align-items-center">
-      <div class="col">
-         <h3 class="page-title">School Notifications</h3>
-         <p class="text-muted">Stay updated with the latest announcements from Good Hope Nabulagala.</p>
+{% extends 'base.html' %}
+
+{% block main_content %}
+<div class="content container-fluid">
+   <div class="page-header">
+      <div class="row align-items-center">
+         <div class="col">
+            <h3 class="page-title">School Notifications</h3>
+            <ul class="breadcrumb">
+               <li class="breadcrumb-item"><a href="{% url 'app:parent_dashboard' %}">Dashboard</a></li>
+               <li class="breadcrumb-item active">Notifications</li>
+            </ul>
+            <p class="text-muted mt-2">Stay updated with the latest announcements from Good Hope Nabulagala.</p>
+         </div>
       </div>
    </div>
-</div>
 
-{% include "includes/messages.html" %}
+   {% include "includes/messages.html" %}
 
-<div class="row">
-   <div class="col-sm-12">
-      <div class="card">
-         <div class="card-body">
-            <div class="table-responsive">
-               <table class="table table-hover table-center mb-0">
-                  <thead>
-                     <tr>
-                        <th style="width: 20%;">Date</th>
-                        <th>Message from School</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                   {% for i in notifications %}
-                     <tr>
-                        <td>{{ i.created_at|date:"d M Y, H:i" }}</td>
-                        <td>{{ i.message }}</td>
-                     </tr> 
-                   {% empty %}
-                     <tr>
-                        <td colspan="2" class="text-center">No notifications found.</td>
-                     </tr>
-                   {% endfor %} 
-                  </tbody>
-               </table>
+   <div class="row">
+      <div class="col-md-12">
+         <div class="card card-table shadow-sm">
+            <div class="card-header">
+               <h4 class="card-title">Recent Notifications</h4>
+            </div>
+            <div class="card-body">
+               <div class="table-responsive">
+                  <table class="table table-hover table-center mb-0">
+                     <thead class="thead-light">
+                        <tr>
+                           <th>Message</th>
+                           <th class="text-right">Date</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {% for notification in notifications %}
+                        <tr>
+                           <td>{{ notification.message }}</td>
+                           <td class="text-right">{{ notification.created_at|date:"d M Y, H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                           <td colspan="2" class="text-center">No notifications found.</td>
+                        </tr>
+                        {% endfor %}
+                     </tbody>
+                  </table>
+               </div>
             </div>
          </div>
       </div>

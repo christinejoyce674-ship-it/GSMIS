@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Staff Feedback</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:hod_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Staff Feedback</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0 datatable">
+                            <thead>
+                                <tr>
+                                    <th>Staff Name</th>
+                                    <th>Feedback</th>
+                                    <th>Reply Status</th>
+                                    <th>Date</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in feedback %}
+                                <tr>
+                                    <td>{{ item.staff_id.admin.first_name }} {{ item.staff_id.admin.last_name }}</td>
+                                    <td>{{ item.feedback }}</td>
+                                    <td>
+                                        {% if item.status == 1 %}
+                                        <span class="badge badge-success">Replied</span>
+                                        {% else %}
+                                        <span class="badge badge-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.created_at }}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-sm btn-primary" data-toggle="modal"
+                                            data-target="#replyModal{{ item.id }}">Reply</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Reply Modal -->
+                                <div class="modal fade" id="replyModal{{ item.id }}" tabindex="-1" role="dialog"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Reply to {{ item.staff_id }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form action="{% url 'app:staff_feedback_reply' %}" method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="feedback_id" value="{{ item.id }}">
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label>Staff Message</label>
+                                                        <p class="text-muted">{{ item.feedback }}</p>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Your Reply</label>
+                                                        <textarea name="reply" class="form-control" rows="4"
+                                                            required>{{ item.reply|default:'' }}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Send Reply</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

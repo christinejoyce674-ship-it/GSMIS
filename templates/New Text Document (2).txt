@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Good Hope Nabulagala School Management  Information System</title>
+    </head>
+<body>
+    {% block content %}
+    {% endblock %}
+
+    </body>
+</html>

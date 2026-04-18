@@ -1,60 +1,37 @@
 {% extends 'base.html' %}
-{% block content %}
-<div class="row">
-    <div class="col-sm-12">
-        <form method="post" action="{% url 'parent_feedback' %}">
-            {% csrf_token %}
-            <div class="page-header">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h3 class="page-title">School Feedback</h3>
-                    </div>
-                </div>
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Send Feedback</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:parent_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Feedback</li>
+                </ul>
             </div>
-            
-            {% include "includes/messages.html" %}
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-md-12">
             <div class="card">
-                <div class="card-body">
-                    <div class="form-group">
-                        <label>Write your message to the administration</label>
-                        <textarea class="form-control" name="feedback" rows="4" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-2">Submit Feedback</button>
+                <div class="card-header">
+                    <h4 class="card-title">Academic Inquiry or Message</h4>
                 </div>
-            </div>
-        </form>
-
-        <div class="card card-table mt-4">
-            <div class="card-header">
-                <h5>Feedback History</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Your Feedback</th>
-                                <th>Admin Reply</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in feedback_history %}
-                            <tr>
-                                <td>{{ i.created_at|date:"d M Y" }}</td>
-                                <td>{{ i.feedback }}</td>
-                                <td>
-                                    {% if i.feedback_reply %}
-                                        <span class="text-success">{{ i.feedback_reply }}</span>
-                                    {% else %}
-                                        <span class="badge badge-warning">Pending Reply</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="card-body">
+                    <form method="post" action="{% url 'app:parent_feedback' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Message to the office</label>
+                            <textarea class="form-control" name="feedback" rows="6"
+                                placeholder="Ask about performance, attendance, or any other school-related concerns..."
+                                required></textarea>
+                        </div>
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">Submit Inquiry</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

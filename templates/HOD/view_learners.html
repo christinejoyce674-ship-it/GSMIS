@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block main_content %}
+<div class="content container-fluid">
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Registered Learners</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'app:hod_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Learners</li>
+                </ul>
+            </div>
+            <div class="col-auto float-right ml-auto">
+                <a href="{% url 'app:add_learner' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add
+                    Learner</a>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="col-12">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0 datatable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Class</th>
+                                    <th>Gender</th>
+                                    <th>Section</th>
+                                    <th>Parent Mobile</th>
+                                    <th>Session</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for learner in learners %}
+                                <tr>
+                                    <td>{{ learner.learner_id }}</td>
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <a href="#" class="avatar avatar-sm mr-2">
+                                                <img class="avatar-img rounded-circle"
+                                                    src="/{{ learner.admin.profile_pic }}" alt="Learner Image">
+                                            </a>
+                                            <a href="#">{{ learner.admin.first_name }} {{ learner.admin.last_name }}</a>
+                                        </h2>
+                                    </td>
+                                    <td>{{ learner.classe_id.class_name }}</td>
+                                    <td>{{ learner.get_gender_display }}</td>
+                                    <td>{{ learner.get_section_display }}</td>
+                                    <td>{{ learner.parent_mobile_number }}</td>
+                                    <td>{{ learner.session_year_id }}</td>
+                                    <td class="text-right">
+                                        <div class="actions">
+                                            <a href="{% url 'app:update_learner' learner.id %}"
+                                                class="btn btn-sm bg-success-light mr-2">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                            <a href="{% url 'app:delete_learner' learner.id %}"
+                                                class="btn btn-sm bg-danger-light"
+                                                onclick="return confirm('Are you sure you want to delete this learner?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
