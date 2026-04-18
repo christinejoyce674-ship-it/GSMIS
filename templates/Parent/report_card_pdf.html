@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Report Card - {{ learner.first_name }} {{ learner.last_name }}</title>
+<style>
+  @page { size: A4; margin: 5mm; }
+  body { font-family: "Times New Roman", Times, serif; font-size: 10px; color: #333; line-height: 1.1; }
+  h1 { font-size: 14px; color: #1a237e; text-transform: uppercase; text-align: center; margin: 0; }
+  h3 { font-size: 11px; color: #d32f2f; text-align: center; text-decoration: underline; margin: 1px 0; }
+  .header-table { width: 100%; border-bottom: 2px solid #1a237e; padding-bottom: 3px; margin-bottom: 5px; }
+  .school-info { text-align: center; }
+  .school-info p { margin: 0px 0; font-size: 8px; }
+  .info-table { width: 100%; background-color: #f8f9fa; padding: 3px; margin-bottom: 5px; font-size: 9px; }
+  .info-table td { padding: 1px 3px; }
+  table.marks { width: 100%; border-collapse: collapse; font-size: 9px; margin-bottom: 5px; }
+  table.marks th { background-color: #1a237e; color: white; padding: 2px; border: 1px solid #000; text-align: center; font-size: 8px; }
+  table.marks td { padding: 2px; border: 1px solid #000; text-align: center; }
+  table.marks tfoot td { background-color: #f5f5f5; font-weight: bold; }
+  .grade-key { background-color: #f0f4f8; padding: 3px; border-left: 2px solid #1a237e; margin-bottom: 4px; font-size: 8px; }
+  .grade-key strong { display: block; margin-bottom: 1px; color: #1a237e; }
+  .grade-row { display: inline-block; margin-right: 4px; }
+  .comments-section { width: 100%; margin-bottom: 4px; font-size: 9px; }
+  .comments-section td { padding: 2px; vertical-align: top; }
+  .comment-box { border: 1px solid #ccc; padding: 2px; margin-top: 1px; }
+  .footer { text-align: center; margin-top: 2px; font-size: 7px; color: #666; border-top: 1px solid #ddd; padding-top: 2px; }
+  .pass { color: #2e7d32; font-weight: bold; }
+  .average { color: #f57c00; font-weight: bold; }
+  .fail { color: #c62828; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<table class="header-table">
+  <tr>
+    <td style="width: 20%; text-align: center; vertical-align: middle;">
+      <img src="{% static 'images/school-logo.jpg' %}" style="width: 70px; height: auto;">
+    </td>
+    <td class="school-info" style="width: 80%;">
+      <h1>GOOD HOPE NABULAGALA PRIMARY SCHOOL</h1>
+      <p>P.O. Box 123, Mengo, Kampala, Uganda</p>
+      <p>Tel: +256 772888739 | Email: info@goodhopenabulagala.com</p>
+      <h3>ACADEMIC REPORT CARD{% if selected_term %} — TERM {{ selected_term }}{% endif %}</h3>
+    </td>
+  </tr>
+</table>
+
+<!-- Learner Info -->
+<table class="info-table">
+  <tr>
+    <td><strong>Learner's Name:</strong> {{ learner.first_name }} {{ learner.last_name }}</td>
+    <td><strong>Learner ID:</strong> {{ learner.learner_id }}</td>
+    <td><strong>Class:</strong> {{ learner.school_class.get_class_name_display }}</td>
+  </tr>
+  <tr>
+    <td><strong>Gender:</strong> {{ learner.get_gender_display }}</td>
+    <td><strong>Average Mark:</strong> {{ average_mark }}</td>
+    <td>
+      <strong>Position:</strong>
+      {% if position %}{{ position }} / {{ total_learners }}{% else %}N/A{% endif %}
+    </td>
+    <td><strong>Total Aggregates:</strong> {{ total_aggregates }}</td>
+  </tr>
+  {% if term_summary %}
+  <tr>
+    <td colspan="3"><strong>Summary for Term {{ selected_term }}:</strong> Position {{ term_summary.position }} / {{ term_summary.total_learners }}</td>
+  </tr>
+  {% endif %}
+</table>
+
+<!-- Marks Table -->
+<table class="marks">
+  <thead>
+    <tr>
+      <th style="text-align:left;">SUBJECT</th>
+      <th>MID-TERM</th>
+      <th>END OF TERM</th>
+      <th>FINAL MARK</th>
+      <th>GRADE</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for record in records %}
+    <tr>
+      <td style="text-align:left;"><strong>{{ record.subject.subject_name }}</strong></td>
+      <td>{{ record.mid|floatformat:0 }}</td>
+      <td>{{ record.eot|floatformat:0 }}</td>
+      <td>
+        <strong
+          class="{% if record.final_weighted_mark >= 50 %}pass{% elif record.final_weighted_mark >= 40 %}average{% else %}fail{% endif %}">
+          {{ record.final_weighted_mark|floatformat:1 }}
+        </strong>
+      </td>
+      <td>
+        <strong
+          class="{% if record.final_weighted_mark >= 50 %}pass{% elif record.final_weighted_mark >= 40 %}average{% else %}fail{% endif %}">
+          {{ record.score }}
+        </strong>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" style="text-align:center;">No records found.</td></tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3" style="text-align:right;"><strong>AVERAGE:</strong></td>
+      <td colspan="2"><strong>{{ average_mark }}</strong></td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- Grading Key -->
+<div class="grade-key">
+  <strong>Grading Scale:</strong>
+  <span class="grade-row">D1: 90-100</span>
+  <span class="grade-row">D2: 80-89</span>
+  <span class="grade-row">C3: 70-79</span>
+  <span class="grade-row">C4: 60-69</span>
+  <span class="grade-row">C5: 55-59</span>
+  <span class="grade-row">C6: 50-54</span>
+  <span class="grade-row">P7: 45-49</span>
+  <span class="grade-row">P8: 40-44</span>
+  <span class="grade-row">F9: 0-39</span>
+</div>
+
+<!-- Remarks Section -->
+<table class="comments-section">
+  <tr>
+    <td style="width:50%; padding-right:4px;">
+      <strong>Class Teacher's Remark:</strong>
+      <div class="comment-box">
+        {% if term_summary and term_summary.teacher_comment %}{{ term_summary.teacher_comment }}{% endif %}
+      </div>
+    </td>
+    <td style="width:50%; padding-left:4px;">
+      <strong>Head Teacher's Remark:</strong>
+      <div class="comment-box">
+        {% if term_summary and term_summary.headteacher_remark %}{{ term_summary.headteacher_remark }}{% endif %}
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- Footer -->
+<div class="footer">
+  <p>Report generated on: {% now "d M Y" %} | GSMIS — Good Hope Nabulagala Primary School</p>
+</div>
+
+</body>
+</html>
